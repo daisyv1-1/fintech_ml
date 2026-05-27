@@ -11,7 +11,6 @@ transactions = [
     {"date": "2024-01-10", "amount": 2500, "type": "shopping", "merchant": "Flipkart"},
 ]
 
-
 # Count transactions per category
 counter = {}
 for t in transactions:
@@ -66,8 +65,39 @@ for t in transactions:
 for m in merccounter:
     print(f"{m}: {', '.join(map(str, merccounter[m]))}")
 # Average spend per merchant
+avgmercbill = {}
+for m in merccounter:
+    curravg = sum(merccounter[m])/len(merccounter[m])
+    key = m
+    value = 0
+    if key not in avgmercbill:
+        avgmercbill[key]=0
+    avgmercbill[key] += curravg
+    print(f"Average spent at {m}: {curravg}")
 # Find merchants where average spend is above 1000
+for a in avgmercbill:
+    if avgmercbill[a] > 1000:
+        print(a)
 # Sort categories by total spend, highest first
+sortedcategorybill = dict(sorted(categorybill.items(), key= lambda i:i[1], reverse=True))
+print(sortedcategorybill)
 # Flag any transaction above 2x the average as "unusual"
+avg = (sum(categorybill.values()))/len(transactions)
+
+def fraud():
+    f=[]
+    for t in transactions:
+        if t['amount']>avg*2:
+            f.append(t)
+    return f    
 # Build a complete summary dict and print it cleanly — total transactions, total spent, average transaction, highest category, most visited merchant, unusual transaction count
 
+summary = {
+    "total_transactions": len(transactions),
+    "total_spent": sum(categorybill.values()),
+    "average_transaction": avg,
+    "highest_category": max(sortedcategorybill, key = sortedcategorybill.get),
+    "most_visited_merchant": maxkey,
+    "unusual_transactions": len(fraud())
+}
+print(summary)
